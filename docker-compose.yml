@@ -2,8 +2,9 @@ services:
   tailscale:
     image: tailscale/tailscale:latest
     hostname: ts-proxy
+    env_file: .env
     environment:
-      - TS_AUTHKEY=tskey-auth-kQzwKB84h211CNTRL-Gk46k3iCHK1bGPDpNf9gK1ttddfcJvWTW
+      - TS_AUTHKEY=${TS_AUTHKEY}
       # - TS_EXTRA_ARGS=--advertise-tags=tag:container
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
