@@ -1,0 +1,40 @@
+---
+version: "3.7"
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    hostname: tailscale
+    environment:
+      - TS_AUTHKEY=tskey-auth-kXbSCd4fw411CNTRL-YiAZ1pRgbjeR3s6em7GYjeTvcWchFTYH
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - /root/tailscale/state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    labels:
+      - traefik.enable=false
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+  traefik:
+    image: traefik:v3.0
+    depends_on:
+      - tailscale
+    ports:
+        - "80:80"
+        - "443:443"
+        - "8080:8080"  
+        - "8211:8211/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/traefik-certificates:/traefik-certificates
+    environment:
+      - TRAEFIK_API_INSECURE=true
+      - TRAEFIK_PROVIDERS_DOCKER=true
+      - TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80
+      - TRAEFIK_ENTRYPOINTS_WEBSECURE_ADDRESS=:443
+      - TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT=false
+      # UDP
+      - TRAEFIK_ENTRYPOINTS_palsrv_ADDRESS=:8211/udp
