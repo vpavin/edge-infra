@@ -1,11 +1,11 @@
 edge:
   hosts:
     lab-gateway:
-      ansible_host:
+      ansible_host: {{ IP ADDRESS }}
       env_vars:
-        TS_AUTHKEY:
+        TS_AUTHKEY: {{ AUTHENTICATION KEY FROM TAILSCALE }}
 
 all:
   vars:
-    ansible_user:
+    ansible_user: {{ USER USED TO CONNNECT TO HOST}}
   
