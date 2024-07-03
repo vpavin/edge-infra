@@ -2,9 +2,9 @@ services:
   tailscale:
     image: tailscale/tailscale:latest
     hostname: lab-gateway
-    env_file: .env
     environment:
       - TS_AUTHKEY={% raw %}${TS_AUTHKEY}{% endraw %}
+      
       {% if tailscale_advertise_container %}
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
       {% endif %}
