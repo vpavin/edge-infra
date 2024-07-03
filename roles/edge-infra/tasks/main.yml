@@ -26,7 +26,7 @@
 - name: configure docker compose file
   template:
     src: docker-compose.yml.j2
-    dest: /root/nginx/docker-compose.yml
+    dest: /root/docker-compose.yml
     mode: 0700
 
 - name: Tear down existing services
