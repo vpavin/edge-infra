@@ -1,21 +1,23 @@
 services:
   tailscale:
     image: tailscale/tailscale:latest
-    hostname: ts-proxy
+    hostname: lab-gateway
     env_file: .env
     environment:
-      - TS_AUTHKEY=${TS_AUTHKEY}
-      # - TS_EXTRA_ARGS=--advertise-tags=tag:container
-      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_AUTHKEY={% raw %}${TS_AUTHKEY}{% endraw %}
+      {% if tailscale_advertise_container %}
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+      {% endif %}
+      - TS_STATE_DIR={{ tailscale_state_dir }}
       - TS_USERSPACE=false
     volumes:
-      - /root/tailscale/state:/var/lib/tailscale
+      - /root/tailscale/state:{{ tailscale_state_dir }}
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
       - sys_module
     restart: unless-stopped
-  proxy:
+  nginx-ts-proxy:
     image: ghcr.io/vpavin/nginx-stream:main
     depends_on:
       - tailscale
@@ -23,12 +25,12 @@ services:
       - /root/nginx/proxy.conf:/etc/nginx/nginx.conf
     restart: unless-stopped
     network_mode: service:tailscale
-  gateway:
+  nginx-gateway:
     image: ghcr.io/vpavin/nginx-stream:main
     depends_on:
-      - proxy
+      - nginx-ts-proxy
     ports:
-      - "8211:8211/udp"
+      - "{{ nginx_udp_port }}:{{ nginx_udp_port }}/udp"
     volumes:
       - /root/nginx/gateway.conf:/etc/nginx/nginx.conf
     restart: unless-stopped

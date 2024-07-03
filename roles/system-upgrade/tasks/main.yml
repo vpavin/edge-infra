@@ -1,0 +1,12 @@
+- name: Upgrade OS through apt
+  apt:
+    upgrade: dist
+
+- name: Clean apt cache
+  apt:
+    autoclean: yes
+
+- name: Remove unused dependencies
+  apt:
+    autoremove: yes
+    

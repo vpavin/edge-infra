@@ -1,0 +1,64 @@
+---
+- name: get arch
+  shell: dpkg --print-architecture
+  register: docker_apt_arch
+  run_once: true
+
+- set_fact: 
+    docker_apt_arch={{ docker_apt_arch.stdout }}
+
+- debug: var=docker_apt_arch
+  run_once: true
+
+- name: Ensure old versions of Docker are not installed.
+  package:
+    name:
+      - docker
+      - docker-engine
+    state: absent
+
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+      - python3-docker
+    state: present
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: "{{ docker_apt_gpg_key }}"
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: Ensure group "docker" exists
+  group:
+    name: docker
+    state: present
+
+- name: Add the user into docker group
+  user:
+    name: "{{ lookup('env','USER') }}"
+    group: docker
+
+- name: Install docker compose
+  apt: 
+    name: "docker-compose-plugin"
+    state: present
+    update_cache: yes
+  when: docker_install_compose

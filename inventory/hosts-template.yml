@@ -1,0 +1,11 @@
+edge:
+  hosts:
+    lab-gateway:
+      ansible_host:
+      env_vars:
+        TS_AUTHKEY:
+
+all:
+  vars:
+    ansible_user:
+  

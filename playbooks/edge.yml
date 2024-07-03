@@ -1,0 +1,8 @@
+---
+- name: Configure edge gateway
+  hosts: edge
+  gather_facts: true
+  roles:
+    - { role: "../roles/system-upgrade", tags: ["system", "update"] }
+    - { role: "../roles/docker", tags: ["system", "infrastructure", "services", "docker"] }
+    - { role: "../roles/edge-infra", tags: ["edge", "infrastructure", "gateway"] }

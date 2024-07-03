@@ -1,0 +1,9 @@
+---
+docker_install_compose: true
+
+docker_apt_release_channel: stable
+docker_apt_ubuntu_release: noble
+docker_apt_repository: "deb https://download.docker.com/linux/ubuntu {{ docker_apt_ubuntu_release }} {{ docker_apt_release_channel }}"
+docker_apt_gpg_key: https://download.docker.com/linux/ubuntu/gpg
+
+docker_users: []

@@ -1,0 +1,46 @@
+---
+- name: Create tailscale state directory if not exist
+  file:
+    path: /root/tailscale/state
+    mode: 0755
+    state: directory
+
+- name: Create nginx configuration directory if not exist
+  file:
+    path: /root/nginx
+    mode: 0755
+    state: directory
+
+- name: configure nginx proxy container
+  template:
+    src: proxy.conf.j2
+    dest: /root/nginx/proxy.conf
+    mode: 0700
+
+- name: configure nginx gateway container
+  template:
+    src: gateway.conf.j2
+    dest: /root/nginx/gateway.conf
+    mode: 0700
+
+- name: configure docker compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: /root/nginx/docker-compose.yml
+    mode: 0700
+
+- name: Tear down existing services
+  community.docker.docker_compose:
+    project_src: /root
+    state: absent
+
+- name: Create and start services
+  community.docker.docker_compose:
+    project_src: /root
+    files:
+    - docker-compose.yml
+  register: output
+
+- name: Show results
+  ansible.builtin.debug:
+    var: output

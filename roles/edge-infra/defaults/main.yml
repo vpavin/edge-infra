@@ -1,0 +1,6 @@
+---
+tailscale_state_dir: "/var/lib/tailscale"
+tailscale_advertise_container: false
+
+nginx_udp_port: 8211
+nginx_proxied_server: "100.89.43.20"
