@@ -3,7 +3,7 @@ stream {
 
     server {
         listen     {{ nginx_udp_port }}     udp;
-        proxy_pass proxy:{{ nginx_udp_port }};
+        proxy_pass {{ nginx_proxy_hostname }}:{{ nginx_udp_port }};
     }
 
 }
